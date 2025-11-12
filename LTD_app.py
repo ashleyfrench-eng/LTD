@@ -62,17 +62,17 @@ st.header("Step 1: Enter Egnyte Folder Link")
 
 folder_url = st.text_input(
     "Enter Egnyte link (must start with https://):",
-    value=st.session_state.get("folder_url", "")
+    value=st.session_state.get("folder_path", "")
 )
 
 if st.button("Save Egnyte Link"):
     if folder_url.startswith("https://"):
         try:
             # Optional: test if the URL is reachable
-            response = requests.head(folder_url, allow_redirects=True, timeout=5)
+            response = requests.head(folder_path, allow_redirects=True, timeout=5)
             if response.status_code == 200:
-                st.session_state["folder_url"] = folder_url
-                st.success(f"✅ Egnyte link saved: {folder_url}")
+                st.session_state["folder_path"] = folder_path
+                st.success(f"✅ Egnyte link saved: {folder_path}")
             else:
                 st.warning(f"⚠️ The link returned status code {response.status_code}. Double-check if it’s public.")
         except requests.RequestException as e:
@@ -359,5 +359,6 @@ if "folder_path" in st.session_state:
 
         except Exception as e:
             st.error(f"❌ Error: {e}")
+
 
 
