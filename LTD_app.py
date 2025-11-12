@@ -68,12 +68,12 @@ if uploaded_zip:
         zip_ref.extractall(tmpdir)
 
     # Step 4 — Save the path in session state
+    st.session_state["tmpdir"] = tmpdir
     st.session_state["folder_path"] = tmpdir
 
     st.success(f"✅ Extracted files to: {tmpdir}")
 
 # Step 5 — Retrieve it later (if available)
-folder_path = st.session_state.get("folder_path", "")
 
 if folder_path:
     st.info(f"Using extracted folder: {folder_path}")
@@ -85,6 +85,7 @@ st.header("Step 2: Assign Load Types Values")
 st.write(" Please Include SW of slab in permanent loads if applicable. In the future this will be automated.")
 
 # --- Step 1: Load JSON file ---
+folder_path = st.session_state.get("folder_path", "")
 json_path = os.path.join(folder_path, "filled_regions_structured.json")
 
 if not os.path.exists(json_path):
@@ -359,6 +360,7 @@ if "folder_path" in st.session_state:
 
         except Exception as e:
             st.error(f"❌ Error: {e}")
+
 
 
 
