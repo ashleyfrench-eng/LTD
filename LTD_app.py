@@ -4,6 +4,7 @@ import json
 import pandas as pd
 import io
 import requests
+import zipfile, tempfile
 import matplotlib.pyplot as plt
 from LTD_scatter import generate_scatter_plots
 from columns_json2 import generate_columns_json
@@ -60,31 +61,23 @@ st.write("First open and run the Dynamo Script LoadTakedown within Revit and thi
 # Step 1: Input an Egnyte URL instead of local path
 st.header("Step 1: Enter Egnyte Folder Link")
 
-folder_url = st.text_input(
-    "Enter Egnyte link (must start with https://):",
-    value=st.session_state.get("folder_path", "")
-)
+uploaded_zip = st.file_uploader("Upload your LTD folder (as a ZIP)", type=["zip"])
 
-if st.button("Save Egnyte Link"):
-    if folder_path.startswith("https://"):
-        try:
-            # Optional: test if the URL is reachable
-            response = requests.head(folder_path, allow_redirects=True, timeout=5)
-            if response.status_code == 200:
-                st.session_state["folder_path"] = folder_path
-                st.success(f"✅ Egnyte link saved: {folder_path}")
-            else:
-                st.warning(f"⚠️ The link returned status code {response.status_code}. Double-check if it’s public.")
-        except requests.RequestException as e:
-            st.error(f"❌ Could not reach the URL. Error: {e}")
-    else:
-        st.error("❌ Invalid URL. Please enter a valid Egnyte link starting with https://")
+if uploaded_zip:
+    # Create temporary directory
+    tmpdir = tempfile.mkdtemp()
+
+    # Extract uploaded zip into it
+    with zipfile.ZipFile(uploaded_zip, "r") as zip_ref:
+        zip_ref.extractall(tmpdir)
+
+    st.success(f"Extracted files to {tmpdir}")
 
 st.header("Step 2: Assign Load Types Values")
 st.write(" Please Include SW of slab in permanent loads if applicable. In the future this will be automated.")
 
 # --- Step 1: Load JSON file ---
-folder_path = st.session_state.get("folder_path", "")
+folder_path = st.session_state.get("tmpdir", "")
 json_path = os.path.join(folder_path, "filled_regions_structured.json")
 
 if not os.path.exists(json_path):
@@ -359,6 +352,7 @@ if "folder_path" in st.session_state:
 
         except Exception as e:
             st.error(f"❌ Error: {e}")
+
 
 
 
