@@ -56,28 +56,35 @@ st.write("by Ashley French — Version: 2025-11-09")
 st.header("How to Use")
 st.write("First open and run the Dynamo Script LoadTakedown within Revit and this will export the neccessary data into a folder of your choice. Next, enter the folder path below and click the buttons to generate the various JSON files and visual outputs. Make sure all required CSV files are present in the 'Revit_Data' subfolder.Visual and data outputs are created that can be inspected throughout. The Voronoi plots show the trubutary areas for the colums, wallls and foundations. The results are put into a LTD table in both excel and here to look at.")
 
-
-
-# Step 1: Input an Egnyte URL instead of local path
-st.header("Step 1: Enter Egnyte Folder Link")
-
-uploaded_zip = st.file_uploader("Upload your LTD folder (as a ZIP)", type=["zip"])
+# Step 1 — Upload ZIP
+uploaded_zip = st.file_uploader("📁 Upload your LTD folder (as a ZIP)", type=["zip"])
 
 if uploaded_zip:
-    # Create temporary directory
+    # Step 2 — Create a temporary directory
     tmpdir = tempfile.mkdtemp()
 
-    # Extract uploaded zip into it
+    # Step 3 — Extract contents of the uploaded ZIP into that directory
     with zipfile.ZipFile(uploaded_zip, "r") as zip_ref:
         zip_ref.extractall(tmpdir)
 
-    st.success(f"Extracted files to {tmpdir}")
+    # Step 4 — Save the path in session state
+    st.session_state["tmpdir"] = tmpdir
+
+    st.success(f"✅ Extracted files to: {tmpdir}")
+
+# Step 5 — Retrieve it later (if available)
+folder_path = st.session_state.get("tmpdir", "")
+
+if folder_path:
+    st.info(f"Using extracted folder: {folder_path}")
+else:
+    st.warning("⚠️ Please upload a ZIP folder first.")
+
 
 st.header("Step 2: Assign Load Types Values")
 st.write(" Please Include SW of slab in permanent loads if applicable. In the future this will be automated.")
 
 # --- Step 1: Load JSON file ---
-folder_path = st.session_state.get("tmpdir", "")
 json_path = os.path.join(folder_path, "filled_regions_structured.json")
 
 if not os.path.exists(json_path):
@@ -352,6 +359,7 @@ if "folder_path" in st.session_state:
 
         except Exception as e:
             st.error(f"❌ Error: {e}")
+
 
 
 
