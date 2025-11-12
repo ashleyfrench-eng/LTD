@@ -3,6 +3,7 @@ import os
 import json
 import pandas as pd
 import io
+import requests
 import matplotlib.pyplot as plt
 from LTD_scatter import generate_scatter_plots
 from columns_json2 import generate_columns_json
@@ -56,19 +57,28 @@ st.write("First open and run the Dynamo Script LoadTakedown within Revit and thi
 
 
 
-# Folder input
-st.header("Step 1: Select Folder Path")
-folder_path = st.text_input(
-    "Enter folder path:",
-    value=st.session_state.get("folder_path", "")
+# Step 1: Input an Egnyte URL instead of local path
+st.header("Step 1: Enter Egnyte Folder Link")
+
+folder_url = st.text_input(
+    "Enter Egnyte link (must start with https://):",
+    value=st.session_state.get("folder_url", "")
 )
 
-if st.button("Save Folder Path"):
-    if os.path.isdir(folder_path):
-        st.session_state["folder_path"] = folder_path
-        st.success(f"✅ Folder path saved: {folder_path}")
+if st.button("Save Egnyte Link"):
+    if folder_url.startswith("https://"):
+        try:
+            # Optional: test if the URL is reachable
+            response = requests.head(folder_url, allow_redirects=True, timeout=5)
+            if response.status_code == 200:
+                st.session_state["folder_url"] = folder_url
+                st.success(f"✅ Egnyte link saved: {folder_url}")
+            else:
+                st.warning(f"⚠️ The link returned status code {response.status_code}. Double-check if it’s public.")
+        except requests.RequestException as e:
+            st.error(f"❌ Could not reach the URL. Error: {e}")
     else:
-        st.error("❌ Invalid folder path.")
+        st.error("❌ Invalid URL. Please enter a valid Egnyte link starting with https://")
 
 st.header("Step 2: Assign Load Types Values")
 st.write(" Please Include SW of slab in permanent loads if applicable. In the future this will be automated.")
@@ -349,4 +359,5 @@ if "folder_path" in st.session_state:
 
         except Exception as e:
             st.error(f"❌ Error: {e}")
+
 
