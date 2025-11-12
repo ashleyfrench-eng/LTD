@@ -66,7 +66,7 @@ folder_url = st.text_input(
 )
 
 if st.button("Save Egnyte Link"):
-    if folder_url.startswith("https://"):
+    if folder_path.startswith("https://"):
         try:
             # Optional: test if the URL is reachable
             response = requests.head(folder_path, allow_redirects=True, timeout=5)
@@ -359,6 +359,7 @@ if "folder_path" in st.session_state:
 
         except Exception as e:
             st.error(f"❌ Error: {e}")
+
 
 
 
