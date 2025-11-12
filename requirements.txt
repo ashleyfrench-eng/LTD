@@ -1,13 +1,9 @@
 streamlit
-os
 pandas
-io
 matplotlib
 plotly
 openpyxl
-csv
-defaultdict
-math
 scipy
 geopandas
 numpy
+shapely
