@@ -3,8 +3,6 @@ import os
 import json
 import pandas as pd
 import io
-import requests
-import zipfile, tempfile
 import matplotlib.pyplot as plt
 from LTD_scatter import generate_scatter_plots
 from columns_json2 import generate_columns_json
@@ -56,30 +54,21 @@ st.write("by Ashley French — Version: 2025-11-09")
 st.header("How to Use")
 st.write("First open and run the Dynamo Script LoadTakedown within Revit and this will export the neccessary data into a folder of your choice. Next, enter the folder path below and click the buttons to generate the various JSON files and visual outputs. Make sure all required CSV files are present in the 'Revit_Data' subfolder.Visual and data outputs are created that can be inspected throughout. The Voronoi plots show the trubutary areas for the colums, wallls and foundations. The results are put into a LTD table in both excel and here to look at.")
 
-# Step 1 — Upload ZIP
-uploaded_zip = st.file_uploader("📁 Upload your LTD folder (as a ZIP)", type=["zip"])
 
-if uploaded_zip:
-    # Step 2 — Create a temporary directory
-    tmpdir = tempfile.mkdtemp()
 
-    # Step 3 — Extract contents of the uploaded ZIP into that directory
-    with zipfile.ZipFile(uploaded_zip, "r") as zip_ref:
-        zip_ref.extractall(tmpdir)
+# Folder input
+st.header("Step 1: Select Folder Path")
+folder_path = st.text_input(
+    "Enter folder path:",
+    value=st.session_state.get("folder_path", "")
+)
 
-    # Step 4 — Save the path in session state
-    st.session_state["tmpdir"] = tmpdir
-    st.session_state["folder_path"] = tmpdir
-
-    st.success(f"✅ Extracted files to: {tmpdir}")
-
-# Step 5 — Retrieve it later (if available)
-
-if folder_path:
-    st.info(f"Using extracted folder: {folder_path}")
-else:
-    st.warning("⚠️ Please upload a ZIP folder first.")
-
+if st.button("Save Folder Path"):
+    if os.path.isdir(folder_path):
+        st.session_state["folder_path"] = folder_path
+        st.success(f"✅ Folder path saved: {folder_path}")
+    else:
+        st.error("❌ Invalid folder path.")
 
 st.header("Step 2: Assign Load Types Values")
 st.write(" Please Include SW of slab in permanent loads if applicable. In the future this will be automated.")
@@ -360,7 +349,6 @@ if "folder_path" in st.session_state:
 
         except Exception as e:
             st.error(f"❌ Error: {e}")
-
 
 
 
