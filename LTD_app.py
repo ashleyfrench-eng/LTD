@@ -4,6 +4,8 @@ import json
 import pandas as pd
 import io
 import matplotlib.pyplot as plt
+import tempfile
+import zipfile
 from LTD_scatter import generate_scatter_plots
 from columns_json2 import generate_columns_json
 from filled_regions2 import generate_filled_regions_json
@@ -56,20 +58,22 @@ st.write("First open and run the Dynamo Script LoadTakedown within Revit and thi
 
 
 
-# Folder input
-st.header("Step 1: Select Folder Path")
-folder_path = st.text_input(
-    "Enter folder path:",
-    value=st.session_state.get("folder_path", "")
-)
+st.header("Step 1: Upload LTD Folder (ZIP)")
 
-if st.button("Save Folder Path"):
-    if os.path.isdir(folder_path):
-        st.session_state["folder_path"] = folder_path
-        st.success(f"✅ Folder path saved: {folder_path}")
-    else:
-        st.error("❌ Invalid folder path.")
+uploaded_zip = st.file_uploader("Upload your LTD folder (as a ZIP)", type=["zip"])
 
+if uploaded_zip:
+    # Create a temporary directory for this user session
+    tmpdir = tempfile.mkdtemp()
+
+    # Extract uploaded ZIP into the directory
+    with zipfile.ZipFile(uploaded_zip, "r") as zip_ref:
+        zip_ref.extractall(tmpdir)
+
+    # Save to session_state so other parts of your app can access it
+    st.session_state["folder_path"] = tmpdir
+
+    st.success(f"✅ Extracted files to: {tmpdir}")
 st.header("Step 2: Assign Load Types Values")
 st.write(" Please Include SW of slab in permanent loads if applicable. In the future this will be automated.")
 
@@ -349,6 +353,7 @@ if "folder_path" in st.session_state:
 
         except Exception as e:
             st.error(f"❌ Error: {e}")
+
 
 
 
