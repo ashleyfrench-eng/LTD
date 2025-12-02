@@ -73,7 +73,15 @@ if uploaded_zip:
     # Save to session_state so other parts of your app can access it
     st.session_state["folder_path"] = tmpdir
 
+
     st.success(f"✅ Extracted files to: {tmpdir}")
+
+def find_file(root, filename):
+    for dirpath, dirnames, filenames in os.walk(root):
+        if filename in filenames:
+            return os.path.join(dirpath, filename)
+    return None
+
 
 # After zip_ref.extractall(tmpdir)
 st.write("Extracted folder structure:")
@@ -364,6 +372,7 @@ if "folder_path" in st.session_state:
 
         except Exception as e:
             st.error(f"❌ Error: {e}")
+
 
 
 
