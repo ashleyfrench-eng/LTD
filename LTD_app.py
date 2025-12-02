@@ -74,6 +74,17 @@ if uploaded_zip:
     st.session_state["folder_path"] = tmpdir
 
     st.success(f"✅ Extracted files to: {tmpdir}")
+
+# After zip_ref.extractall(tmpdir)
+st.write("Extracted folder structure:")
+for root, dirs, files in os.walk(tmpdir):
+    level = root.replace(tmpdir, "").count(os.sep)
+    indent = " " * 4 * level
+    st.write(f"{indent}{os.path.basename(root)}/")
+    subindent = " " * 4 * (level + 1)
+    for f in files:
+        st.write(f"{subindent}{f}")
+
 st.header("Step 2: Assign Load Types Values")
 st.write(" Please Include SW of slab in permanent loads if applicable. In the future this will be automated.")
 
@@ -353,6 +364,7 @@ if "folder_path" in st.session_state:
 
         except Exception as e:
             st.error(f"❌ Error: {e}")
+
 
 
 
