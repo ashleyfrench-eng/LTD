@@ -185,20 +185,6 @@ if "folder_path" in st.session_state:
         except Exception as e:
             st.error(f"❌ Error: {e}")
 
-# Generate floor + columns + walls JSON + Visuals
-st.header("Step 4: Generate Combined Data and Visuals of Elements")
-if "folder_path" in st.session_state:
-    folder_path = st.session_state["folder_path"]
-
-    if st.button("🟦 Generate Visual Plots and Combine Data"):
-        with st.spinner("Processing floors..."):
-            json_path, floor_count = generate_floor_plot_data(folder_path)
-        st.success(f"✅ JSON created: {json_path}")
-        st.info(f"📊 Floors processed: {floor_count}")
-
-        
-
-
 st.header("Step 3: Assign Load Types Values")
 st.write(" Please Include SW of slab in permanent loads if applicable. In the future this will be automated.")
 
@@ -285,6 +271,19 @@ else:
             # st.json(combined_values)
 
 
+
+# Generate floor + columns + walls JSON + Visuals
+st.header("Step 4: Generate Combined Data and Visuals of Elements")
+if "folder_path" in st.session_state:
+    folder_path = st.session_state["folder_path"]
+
+    if st.button("🟦 Generate Visual Plots and Combine Data"):
+        with st.spinner("Processing floors..."):
+            json_path, floor_count = generate_floor_plot_data(folder_path)
+        st.success(f"✅ JSON created: {json_path}")
+        st.info(f"📊 Floors processed: {floor_count}")
+
+        
 # Generate Voronoi floor plots + JSON
 st.header("Step 5: Generate Trib areas for  Load Take Down and show visuals and collect data")
 if "folder_path" in st.session_state:
@@ -376,6 +375,7 @@ if "folder_path" in st.session_state:
 
         except Exception as e:
             st.error(f"❌ Error: {e}")
+
 
 
 
