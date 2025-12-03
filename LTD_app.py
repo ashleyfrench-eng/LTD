@@ -190,10 +190,10 @@ st.write(" Please Include SW of slab in permanent loads if applicable. In the fu
 
 # --- Step 1: Load JSON file ---
 folder_path = st.session_state.get("folder_path", "")
-json_path = os.path.join(folder_path, "filled_regions_structured.json")
+json_path = os.path.join(folder_path, "area_loads_cleaned.json")
 
 if not os.path.exists(json_path):
-    st.warning("⚠️ filled_regions_structured.json not found in the selected folder.")
+    st.warning("⚠️ area_loads_cleaned.json not found in the selected folder.")
 else:
     with open(json_path, "r") as f:
         data = json.load(f)
@@ -375,6 +375,7 @@ if "folder_path" in st.session_state:
 
         except Exception as e:
             st.error(f"❌ Error: {e}")
+
 
 
 
