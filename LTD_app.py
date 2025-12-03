@@ -196,6 +196,14 @@ if "folder_path" in st.session_state:
         except Exception as e:
             st.error(f"❌ Error: {e}")
 
+with open(json_path, "rb") as f:
+    st.download_button(
+        label="⬇️ Download columns_cleaned.json",
+        data=f,
+        file_name="columns_cleaned.json",
+        mime="application/json"
+    )
+
 if "folder_path" in st.session_state:
     folder_path = st.session_state["folder_path"]
 
@@ -372,6 +380,7 @@ if "folder_path" in st.session_state:
 
         except Exception as e:
             st.error(f"❌ Error: {e}")
+
 
 
 
