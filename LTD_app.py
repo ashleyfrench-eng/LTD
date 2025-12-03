@@ -93,7 +93,113 @@ for root, dirs, files in os.walk(tmpdir):
     for f in files:
         st.write(f"{subindent}{f}")
 
-st.header("Step 2: Assign Load Types Values")
+
+# --- Generate column JSON ---
+st.header("Step 2: Generate Cleaned Data and Visual Output Check files")
+if "folder_path" in st.session_state:
+    folder_path = st.session_state["folder_path"]
+
+    if st.button("🧱 Generate Cleaned Column Data"):
+        try:
+            with st.spinner("Generating column JSON..."):
+                json_path = generate_columns_json(folder_path)
+            st.success(f"✅ JSON file created: {json_path}")
+            
+            # Optionally display the JSON
+            # with open(json_path, "r") as f:
+            #     st.json(json.load(f))
+                
+        except Exception as e:
+            st.error(f"❌ Error: {e}")
+
+
+
+if "folder_path" in st.session_state:
+    folder_path = st.session_state["folder_path"]
+
+    if st.button("🗺️ Generate Cleaned Area Loads"):
+        try:
+            with st.spinner("Processing area loads..."):
+                json_path = generate_filled_regions_json(folder_path)
+            st.success(f"✅ JSON file created: {json_path}")
+
+            # Display preview of JSON
+            #with open(json_path, "r") as f:
+            #    preview = json.load(f)
+            #st.json(preview)
+
+        except Exception as e:
+            st.error(f"❌ Error: {e}")
+
+# Generate foundation visuals and JSON
+if "folder_path" in st.session_state:
+    folder_path = st.session_state["folder_path"]
+
+    if st.button("🏗️ Generate Foundation  Visuals and Clean Data"):
+        try:
+            with st.spinner("Processing foundation geometries..."):
+                json_path, plot_folder = generate_foundation_json(folder_path)
+            st.success(f"✅ Foundation JSON created: {json_path}")
+            st.info(f"📁 Plots saved in: {plot_folder}")
+
+            # Display JSON preview
+            #with open(json_path, "r") as f:
+            #    st.json(json.load(f))
+
+        except Exception as e:
+            st.error(f"❌ Error: {e}")
+
+# Generate wall JSON
+if "folder_path" in st.session_state:
+    folder_path = st.session_state["folder_path"]
+
+    if st.button("🏗️ Generate Cleaned Wall Data"):
+        try:
+            with st.spinner("Processing wall data..."):
+                json_path, wall_count = generate_wall_json(folder_path)
+            st.success(f"✅ Wall JSON created: {json_path}")
+            st.info(f"📊 Walls exported: {wall_count}")
+
+            # Preview JSON
+            #with open(json_path, "r") as f:
+            #    st.json(json.load(f))
+
+        except Exception as e:
+            st.error(f"❌ Error: {e}")
+
+# Generate merged floor JSON
+if "folder_path" in st.session_state:
+    folder_path = st.session_state["folder_path"]
+
+    if st.button("🟦 Generate Cleaned Floor Boundary Data"):
+        try:
+            with st.spinner("Making floor boundaries..."):
+                json_path, floor_count = generate_merged_floor_json(folder_path)
+            st.success(f"✅ JSON created: {json_path}")
+            st.info(f"📊 Floors processed: {floor_count}")
+
+            # Preview JSON
+            #with open(json_path, "r") as f:
+            #    st.json(json.load(f))
+
+        except Exception as e:
+            st.error(f"❌ Error: {e}")
+
+# Generate floor + columns + walls JSON + Visuals
+st.header("Step 4: Generate Combined Data and Visuals of Elements")
+if "folder_path" in st.session_state:
+    folder_path = st.session_state["folder_path"]
+
+    if st.button("🟦 Generate Visual Plots and Combine Data"):
+        with st.spinner("Processing floors..."):
+            json_path, floor_count = generate_floor_plot_data(folder_path)
+        st.success(f"✅ JSON created: {json_path}")
+        st.info(f"📊 Floors processed: {floor_count}")
+
+        
+
+
+st.header("Step 3: Assign Load Types Values")
 st.write(" Please Include SW of slab in permanent loads if applicable. In the future this will be automated.")
 
 # --- Step 1: Load JSON file ---
@@ -178,116 +284,6 @@ else:
             st.success(f"✅ UnitLoad values added and saved to: {json_path}")
             # st.json(combined_values)
 
-# --- Generate column JSON ---
-st.header("Step 3: Generate Cleaned Data and Visual Output Check files")
-if "folder_path" in st.session_state:
-    folder_path = st.session_state["folder_path"]
-
-    if st.button("🧱 Generate Cleaned Column Data"):
-        try:
-            with st.spinner("Generating column JSON..."):
-                json_path = generate_columns_json(folder_path)
-            st.success(f"✅ JSON file created: {json_path}")
-            
-            # Optionally display the JSON
-            # with open(json_path, "r") as f:
-            #     st.json(json.load(f))
-                
-        except Exception as e:
-            st.error(f"❌ Error: {e}")
-
-with open(json_path, "rb") as f:
-    st.download_button(
-        label="⬇️ Download columns_cleaned.json",
-        data=f,
-        file_name="columns_cleaned.json",
-        mime="application/json"
-    )
-
-if "folder_path" in st.session_state:
-    folder_path = st.session_state["folder_path"]
-
-    if st.button("🗺️ Generate Cleaned Area Loads"):
-        try:
-            with st.spinner("Processing area loads..."):
-                json_path = generate_filled_regions_json(folder_path)
-            st.success(f"✅ JSON file created: {json_path}")
-
-            # Display preview of JSON
-            #with open(json_path, "r") as f:
-            #    preview = json.load(f)
-            #st.json(preview)
-
-        except Exception as e:
-            st.error(f"❌ Error: {e}")
-
-# Generate foundation visuals and JSON
-if "folder_path" in st.session_state:
-    folder_path = st.session_state["folder_path"]
-
-    if st.button("🏗️ Generate Foundation  Visuals and Clean Data"):
-        try:
-            with st.spinner("Processing foundation geometries..."):
-                json_path, plot_folder = generate_foundation_json(folder_path)
-            st.success(f"✅ Foundation JSON created: {json_path}")
-            st.info(f"📁 Plots saved in: {plot_folder}")
-
-            # Display JSON preview
-            #with open(json_path, "r") as f:
-            #    st.json(json.load(f))
-
-        except Exception as e:
-            st.error(f"❌ Error: {e}")
-
-# Generate wall JSON
-if "folder_path" in st.session_state:
-    folder_path = st.session_state["folder_path"]
-
-    if st.button("🏗️ Generate Cleaned Wall Data"):
-        try:
-            with st.spinner("Processing wall data..."):
-                json_path, wall_count = generate_wall_json(folder_path)
-            st.success(f"✅ Wall JSON created: {json_path}")
-            st.info(f"📊 Walls exported: {wall_count}")
-
-            # Preview JSON
-            #with open(json_path, "r") as f:
-            #    st.json(json.load(f))
-
-        except Exception as e:
-            st.error(f"❌ Error: {e}")
-
-# Generate merged floor JSON
-if "folder_path" in st.session_state:
-    folder_path = st.session_state["folder_path"]
-
-    if st.button("🟦 Generate Cleaned Floor Boundary Data"):
-        try:
-            with st.spinner("Making floor boundaries..."):
-                json_path, floor_count = generate_merged_floor_json(folder_path)
-            st.success(f"✅ JSON created: {json_path}")
-            st.info(f"📊 Floors processed: {floor_count}")
-
-            # Preview JSON
-            #with open(json_path, "r") as f:
-            #    st.json(json.load(f))
-
-        except Exception as e:
-            st.error(f"❌ Error: {e}")
-
-# Generate floor + columns + walls JSON + Visuals
-st.header("Step 4: Generate Combined Data and Visuals of Elements")
-if "folder_path" in st.session_state:
-    folder_path = st.session_state["folder_path"]
-
-    if st.button("🟦 Generate Visual Plots and Combine Data"):
-        with st.spinner("Processing floors..."):
-            json_path, floor_count = generate_floor_plot_data(folder_path)
-        st.success(f"✅ JSON created: {json_path}")
-        st.info(f"📊 Floors processed: {floor_count}")
-
-        #with open(json_path, "r") as f:
-        #    st.json(json.load(f))
 
 # Generate Voronoi floor plots + JSON
 st.header("Step 5: Generate Trib areas for  Load Take Down and show visuals and collect data")
@@ -380,6 +376,7 @@ if "folder_path" in st.session_state:
 
         except Exception as e:
             st.error(f"❌ Error: {e}")
+
 
 
 
